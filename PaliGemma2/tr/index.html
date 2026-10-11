@@ -1,0 +1,682 @@
+<title>PaliGemma Oyun Alanı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: tek sütun (≤980px); her örnek bir deney tezgâhı: başlık → kontroller → görsel + okuma paneli → blog notu */
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --ink:#17202C; --muted:#586374; --line:#D9E0E9;
+  --accent:#2B59C3; --img:#B8730B; --suf:#B8336A; --soft:#EAF0F8; --warn:#9A5B00; --warn-bg:#FFF4DF; --ok:#2E7D4F;
+  --f-display:"Literata", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", Consolas, ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E131A; --surface:#151C26; --ink:#E4E9F0; --muted:#97A2B2; --line:#283241;
+    --accent:#86A6F2; --img:#E5A43B; --suf:#EA7BA6; --soft:#1C2633; --warn:#F2BF6A; --warn-bg:#2A2214; --ok:#6CCB93; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#151C26; --ink:#E4E9F0; --muted:#97A2B2; --line:#283241;
+  --accent:#86A6F2; --img:#E5A43B; --suf:#EA7BA6; --soft:#1C2633; --warn:#F2BF6A; --warn-bg:#2A2214; --ok:#6CCB93; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.55; padding-inline:16px; padding-block:0 64px}
+.wrap{max-width:980px; margin:0 auto}
+header.top{padding-block:44px 22px}
+.eyebrow{font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+h1{font-family:var(--f-display); font-weight:650; font-size:clamp(32px,5vw,44px); line-height:1.12; margin:10px 0 12px; text-wrap:balance}
+h2{font-family:var(--f-display); font-weight:650; font-size:27px; margin:0; text-wrap:balance}
+h3{font-family:var(--f-display); font-weight:500; font-size:20px; margin:0; text-wrap:balance}
+p{max-width:72ch}
+a{color:var(--accent)}
+.lede{color:var(--muted); font-size:17.5px; margin:0}
+nav.toc{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+nav.toc a{font-size:14px; text-decoration:none; border:1px solid var(--line); background:var(--surface); padding:5px 11px; border-radius:20px}
+nav.toc a:hover{border-color:var(--accent)}
+.medium{font-size:14.5px; color:var(--muted); margin-top:14px}
+section.part{padding-block:36px 4px; display:flex; flex-direction:column; gap:22px}
+.part-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px; border-top:2px solid var(--ink); padding-top:14px}
+.stamp{font-family:var(--f-mono); font-size:13px; color:var(--accent); text-decoration:none}
+figure.bench{margin:0; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.bench > header p{margin:6px 0 0; color:var(--muted)}
+.controls{display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center; font-size:14.5px}
+.controls label{display:flex; align-items:center; gap:8px}
+.controls output{font-family:var(--f-mono); font-size:13px; min-width:5ch; font-variant-numeric:tabular-nums}
+input[type=range]{accent-color:var(--accent); width:130px}
+input[type=text],select{font:inherit; font-size:14.5px; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:5px 8px}
+input[type=text]{min-width:0; width:220px; max-width:100%}
+button{font:inherit; font-size:14px; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:5px 11px; cursor:pointer}
+button:hover{border-color:var(--accent)}
+button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--surface)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.seg{display:inline-flex; gap:4px; flex-wrap:wrap}
+.split{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:20px; align-items:start}
+@media (max-width:760px){ .split{grid-template-columns:1fr} }
+.readout{font-size:14.5px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.readout .big{font-family:var(--f-mono); font-size:22px; font-variant-numeric:tabular-nums}
+.kv{display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-variant-numeric:tabular-nums}
+.kv dt{color:var(--muted)} .kv dd{margin:0; font-family:var(--f-mono); font-size:13.5px; overflow-wrap:anywhere}
+figcaption{font-size:14px; color:var(--muted); border-top:1px dashed var(--line); padding-top:10px}
+figcaption b{color:var(--ink)}
+.scroll{overflow-x:auto; max-width:100%}
+.warn{background:var(--warn-bg); color:var(--warn); border-radius:6px; padding:7px 10px; font-size:14px}
+.okc{color:var(--ok)} .badc{color:var(--suf); font-weight:600}
+code{font-family:var(--f-mono); font-size:.88em; background:var(--soft); padding:1px 5px; border-radius:3px}
+/* matris */
+.mx{display:grid; gap:3px; font-family:var(--f-mono); font-size:11.5px; width:max-content}
+.mx .h{color:var(--muted); display:flex; align-items:center; justify-content:center; padding:2px}
+.mx button.cell{width:42px; height:34px; padding:0; border-radius:4px; border:1px solid transparent; font-family:var(--f-mono); font-size:11px; color:var(--ink)}
+.mx button.cell.diag{border-color:var(--ink)}
+.mx button.cell.dep{outline:2px solid var(--suf); outline-offset:-2px}
+.mx button.cell.sel{outline:3px solid var(--suf); outline-offset:-3px}
+/* softmax tablo */
+table{border-collapse:collapse; font-size:14px; font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line); padding:6px 10px; text-align:right; font-family:var(--f-mono); font-size:13px}
+th{font-family:var(--f-body); color:var(--muted); font-weight:600; font-size:13px}
+td.bad{color:var(--suf); font-weight:600}
+/* canvas */
+canvas.pic{width:100%; max-width:448px; aspect-ratio:1; height:auto; border-radius:6px; display:block}
+#v-zoom{width:112px; height:112px; image-rendering:pixelated; border-radius:4px; border:1px solid var(--line)}
+#l-cv{touch-action:none; cursor:crosshair}
+#v-cv{cursor:pointer}
+svg text{fill:var(--muted); font-family:var(--f-body); font-size:12px}
+svg .axisl{stroke:var(--line)}
+/* token şeridi */
+.seq{display:flex; flex-wrap:wrap; gap:4px; font-family:var(--f-mono); font-size:12.5px}
+.tok{padding:3px 7px; border-radius:4px; border:1px solid; white-space:nowrap}
+.tok.i{color:var(--img); border-color:var(--img)}
+.tok.i.m{background:var(--img); color:var(--surface)}
+.tok.t{color:var(--accent); border-color:var(--accent)}
+.tok.s{color:var(--suf); border-color:var(--suf)}
+.tok.more{border-style:dashed}
+.chain{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-family:var(--f-mono); font-size:14px}
+.chain .st{border:1px solid var(--line); border-radius:6px; padding:8px 12px; background:var(--bg)}
+.chain .st small{display:block; font-family:var(--f-body); color:var(--muted); font-size:12px}
+/* maske */
+table.mask{border-collapse:separate; border-spacing:3px}
+.mask th,.mask td{border:none; padding:0; text-align:center}
+.mask td{width:32px; height:28px; border-radius:3px; background:var(--soft); cursor:pointer; font-size:12px; color:transparent}
+.mask td.y{background:color-mix(in srgb, var(--accent) 55%, var(--surface)); color:var(--surface)}
+.mask tr.act td{box-shadow:inset 0 0 0 2px var(--suf)}
+.mask th{font-family:var(--f-mono); font-size:12px; padding:2px 6px}
+.mask th.i{color:var(--img)} .mask th.t{color:var(--accent)} .mask th.s{color:var(--suf)}
+.mask th.vis{text-decoration:underline; text-decoration-thickness:2px}
+.mask td.loss{background:transparent; color:var(--suf); cursor:default; font-weight:600}
+/* BN/LN */
+table.nm td{min-width:58px; border-bottom:none; border-radius:3px; padding:5px 7px}
+table.nm td.st{background:transparent; color:var(--muted); font-size:11.5px}
+table.nm td.ax{box-shadow:inset 0 0 0 2px var(--accent)}
+table.nm th{font-size:12px}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px}
+.two > div{min-width:0}
+.cap{font-size:13px; color:var(--muted); margin-bottom:6px}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+footer{color:var(--muted); font-size:14px; padding-top:30px}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Freya Research Fellow · PaliGemma 2 blog hazırlığı</div>
+  <h1>PaliGemma Oyun Alanı</h1>
+  <p class="lede">Videonun üç bölümü için oynanabilir örnekler: SigLIP görüntü kodlayıcı, BatchNorm ile LayerNorm farkı ve PaliGemma'nın resmi token'a çevirmesi. Her örneğin altında blog'da neyi göstereceği yazıyor.</p>
+  <nav class="toc" aria-label="Bölümler">
+    <a href="#siglip">SigLIP · 05:52</a>
+    <a href="#norm">BatchNorm / LayerNorm · 54:25</a>
+    <a href="#pali">PaliGemma · 2:18:30</a>
+  </nav>
+  <p class="medium">Medium yazıya etkileşimli içerik gömmeye izin vermez. Blog için istediğin durumu ayarlayıp ekran görüntüsü ya da kısa bir GIF al, bu sayfanın linkini de yazının sonuna koy.</p>
+</header>
+
+<!-- ================= SigLIP ================= -->
+<section class="part" id="siglip">
+  <div class="part-head"><h2>SigLIP: görüntü kodlayıcı</h2><a class="stamp" href="https://www.youtube.com/watch?v=vAmKB7iPkWw&amp;t=352s" target="_blank" rel="noopener">00:05:52 – 00:35:38</a></div>
+
+  <figure class="bench" id="w-matrix">
+    <header><h3>Benzerlik matrisi: CLIP ve SigLIP</h3>
+      <p>Satırlar resimler (R), sütunlar metinler (M). Köşegen doğru eşleşmeler. Bir hücreye tıkla: o hücrenin değerini hesaplamak için hangi skorlara ihtiyaç olduğu işaretlenir.</p></header>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Kayıp türü">
+        <button type="button" id="m-clip" aria-pressed="true">CLIP · softmax</button>
+        <button type="button" id="m-sig" aria-pressed="false">SigLIP · sigmoid</button>
+      </div>
+      <label for="m-n">Batch N <input type="range" id="m-n" min="3" max="10" value="6"><output id="m-n-o">6</output></label>
+      <label for="m-q">Eşleşme kalitesi <input type="range" id="m-q" min="0" max="100" value="80"><output id="m-q-o">0,80</output></label>
+      <label for="m-t">Sıcaklık t <input type="range" id="m-t" min="1" max="50" value="20"><output id="m-t-o">20</output></label>
+      <label for="m-b" id="m-b-wrap" hidden>Bias b <input type="range" id="m-b" min="-15" max="5" step="0.5" value="-10"><output id="m-b-o">-10</output></label>
+    </div>
+    <div class="split">
+      <div class="scroll"><div class="mx" id="m-grid"></div></div>
+      <div class="readout" id="m-read"></div>
+    </div>
+    <figcaption><b>Blog'da:</b> İki modun ekran görüntüsünü yan yana koy. CLIP'te tek hücre bütün satıra bağlı, SigLIP'te yalnızca kendine. Paralelleştirme farkını bundan daha kısa anlatan bir görsel yok.</figcaption>
+  </figure>
+
+  <figure class="bench" id="w-softmax">
+    <header><h3>Softmax neden taşar?</h3>
+      <p>Logit'leri gir. Sol taraf float32'de doğrudan <code>e<sup>x</sup></code> hesaplar, sağ taraf önce en büyük değeri çıkarır.</p></header>
+    <div class="controls">
+      <label for="s-in">Logit'ler <input type="text" id="s-in" value="90, 89, 85"></label>
+      <div class="seg" role="group" aria-label="Hazır örnekler">
+        <button type="button" data-v="1, 2, 3">Küçük</button>
+        <button type="button" data-v="90, 89, 85">Taşar</button>
+        <button type="button" data-v="-120, -115, -110">Çok negatif</button>
+      </div>
+    </div>
+    <div class="scroll"><table id="s-tbl"></table></div>
+    <div class="readout" id="s-read"></div>
+    <figcaption><b>Blog'da:</b> "Taşar" örneğinin tablosu. Sol sütunda <code>inf</code> ve <code>NaN</code>, sağda düzgün olasılıklar. Altına "max çıkarmak sonucu değiştirmez, çünkü pay ve payda aynı sabitle çarpılır" cümlesi.</figcaption>
+  </figure>
+
+  <figure class="bench" id="w-bias">
+    <header><h3>Bias neden −10 ile başlıyor?</h3>
+      <p>Eğitimin başında vektörler rastgele olduğu için benzerlikler 0 civarında. Kayıp bu durumda sadece <i>b</i>'ye bağlı: bir pozitif hücre ve N−1 negatif hücre.</p></header>
+    <div class="controls">
+      <label for="b-n">Batch N <input type="range" id="b-n" min="1" max="15" value="15"><output id="b-n-o">32.768</output></label>
+      <label for="b-b">Bias b <input type="range" id="b-b" min="-15" max="5" step="0.1" value="0"><output id="b-b-o">0.0</output></label>
+    </div>
+    <div class="split">
+      <div><svg id="b-svg" viewBox="0 0 560 270" role="img" aria-label="Başlangıç kaybının bias'a göre değişimi" style="width:100%;height:auto"></svg></div>
+      <div class="readout" id="b-read"></div>
+    </div>
+    <figcaption><b>Blog'da:</b> Eğri ve tek cümle: "En iyi başlangıç bias'ı −ln(N−1); N = 32 bin için bu yaklaşık −10.4. Makaledeki −10 bu yüzden keyfi bir sayı değil."</figcaption>
+  </figure>
+
+  <figure class="bench" id="w-vit">
+    <header><h3>Vision Transformer: resmi yamalara bölmek</h3>
+      <p>Bir yamanın üzerine gel ya da dokun. O yamanın ham piksellerini, vektör boyutunu ve toplam token sayısını görürsün. Kendi resmini de yükleyebilirsin (yalnızca tarayıcında kalır).</p></header>
+    <div class="controls">
+      <label for="v-res">Çözünürlük <select id="v-res"><option>224</option><option>448</option><option>896</option></select></label>
+      <label for="v-p">Yama boyutu <select id="v-p"><option value="14">14 (SigLIP So400m)</option><option value="16">16 (klasik ViT)</option><option value="32">32</option></select></label>
+      <label for="v-file">Resim <input type="file" id="v-file" accept="image/*"></label>
+    </div>
+    <div class="split">
+      <canvas class="pic" id="v-cv" width="448" height="448" aria-label="Yamalara bölünmüş resim"></canvas>
+      <div class="readout">
+        <canvas id="v-zoom" width="112" height="112" aria-label="Seçili yama, büyütülmüş"></canvas>
+        <dl class="kv" id="v-read"></dl>
+      </div>
+    </div>
+    <figcaption><b>Blog'da:</b> 224 ile 896 çözünürlüklerinin ekran görüntüsü yan yana. 256 token'dan 4096 token'a çıkışı ve dikkat maliyetinin karesel büyümesini gösterir. PaliGemma 2'nin çözünürlük ölçeklemesine giriş olarak kullanılabilir.</figcaption>
+  </figure>
+</section>
+
+<!-- ================= NORM ================= -->
+<section class="part" id="norm">
+  <div class="part-head"><h2>BatchNorm ve LayerNorm</h2><a class="stamp" href="https://www.youtube.com/watch?v=vAmKB7iPkWw&amp;t=3265s" target="_blank" rel="noopener">00:54:25 – 01:05:28</a></div>
+
+  <figure class="bench" id="w-norm">
+    <header><h3>Aynı matris, iki eksen</h3>
+      <p>Her satır bir örnek, her sütun bir özellik. Özelliklerin ölçekleri bilerek çok farklı. Mavi çerçeve, istatistiğin hangi sayılardan hesaplandığını gösterir. Sonra batch'e bir aykırı örnek ekle ve diğer örneklerin çıktısına ne olduğuna bak.</p></header>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Normalizasyon türü">
+        <button type="button" id="n-bn" aria-pressed="true">BatchNorm</button>
+        <button type="button" id="n-ln" aria-pressed="false">LayerNorm</button>
+      </div>
+      <label for="n-b">Batch B <input type="range" id="n-b" min="1" max="6" value="4"><output id="n-b-o">4</output></label>
+      <button type="button" id="n-out" aria-pressed="false">Aykırı örnek ekle</button>
+    </div>
+    <div class="two">
+      <div><div class="cap">Girdi (çerçeve = istatistik grubu)</div><div class="scroll"><table class="nm" id="n-in"></table></div></div>
+      <div><div class="cap">Çıktı (γ = 1, β = 0)</div><div class="scroll"><table class="nm" id="n-o"></table></div></div>
+    </div>
+    <div class="readout" id="n-read"></div>
+    <figcaption><b>Blog'da:</b> Aykırı örnek eklenmiş haliyle iki ekran görüntüsü. BatchNorm'da diğer örneklerin çıktısı değişiyor, LayerNorm'da hiç değişmiyor. "Örnekler birbirine bağlanır" cümlesinin kanıtı bu.</figcaption>
+  </figure>
+
+  <figure class="bench" id="w-shift">
+    <header><h3>Kayan dağılım ve LayerNorm</h3>
+      <p>Bir token'ın 400 boyutlu aktivasyon vektörü. Eğitim adımı ilerledikçe önceki katmanlar değişiyor ve bu vektörün ortalaması ile yayılımı kayıyor. LayerNorm sonrası dağılım ise yerinde duruyor.</p></header>
+    <div class="controls">
+      <label for="h-s">Eğitim adımı <input type="range" id="h-s" min="0" max="100" value="0"><output id="h-s-o">0</output></label>
+      <button type="button" id="h-play" aria-pressed="false">Oynat</button>
+    </div>
+    <div class="two">
+      <div><div class="cap" id="h-c1">Normalizasyon yok</div><svg id="h-raw" viewBox="0 0 420 170" role="img" aria-label="Ham aktivasyon histogramı" style="width:100%;height:auto"></svg></div>
+      <div><div class="cap" id="h-c2">LayerNorm sonrası</div><svg id="h-nrm" viewBox="0 0 420 170" role="img" aria-label="Normalize aktivasyon histogramı" style="width:100%;height:auto"></svg></div>
+    </div>
+    <figcaption><b>Blog'da:</b> "Hareket eden hedef" fikrinin GIF'i. Oynat'a basıp ekran kaydı al: soldaki dağılım kayıyor, sağdaki sabit.</figcaption>
+  </figure>
+</section>
+
+<!-- ================= PALIGEMMA ================= -->
+<section class="part" id="pali">
+  <div class="part-head"><h2>PaliGemma: resmi token'a çevirmek</h2><a class="stamp" href="https://www.youtube.com/watch?v=vAmKB7iPkWw&amp;t=8310s" target="_blank" rel="noopener">02:18:30 – 02:40:56</a></div>
+
+  <figure class="bench" id="w-pre">
+    <header><h3>Piksel ön işleme hattı</h3>
+      <p>Tek bir piksel değerini işlemcinin üç adımından geçir. Normalizasyon sabitlerini değiştirince SigLIP'in hiç görmediği sayılar ortaya çıkar.</p></header>
+    <div class="controls">
+      <label for="p-v">Piksel <input type="range" id="p-v" min="0" max="255" value="200"><output id="p-v-o">200</output></label>
+      <label for="p-m">Sabitler <select id="p-m"><option value="sig">SigLIP: ortalama 0.5, std 0.5</option><option value="imn">ImageNet (R kanalı): 0.485, 0.229</option></select></label>
+    </div>
+    <div class="chain" id="p-chain"></div>
+    <svg id="p-svg" viewBox="0 0 560 70" role="img" aria-label="Normalize değerin sayı doğrusu üzerindeki yeri" style="width:100%;max-width:720px;height:auto"></svg>
+    <div id="p-warn"></div>
+    <figcaption><b>Blog'da:</b> Zincirin kendisi küçük bir görsel olur. ImageNet sabitleriyle aralığın dışına taşan hali de "yanlış normalizasyon hata vermez, sessizce bozar" cümlesine kanıt.</figcaption>
+  </figure>
+
+  <figure class="bench" id="w-seq">
+    <header><h3>Dizi kurucu</h3>
+      <p>Komutu ve cevabı yaz, çözünürlüğü seç. İşlemcinin kurduğu diziyi ve uzunlukları görürsün. Kelime bölme yaklaşıktır, gerçek tokenizer SentencePiece kullanır.</p></header>
+    <div class="controls">
+      <label for="q-p">Komut (prefix) <input type="text" id="q-p" value="caption tr"></label>
+      <label for="q-s">Cevap (suffix) <input type="text" id="q-s" value="Kırmızı çatılı bir ev ve bir ağaç."></label>
+      <label for="q-r">Çözünürlük <select id="q-r"><option>224</option><option>448</option><option>896</option></select></label>
+      <button type="button" id="q-m" aria-pressed="false">Yer tutucuları vektörlerle değiştir</button>
+    </div>
+    <div class="seq" id="q-seq"></div>
+    <dl class="kv" id="q-read"></dl>
+    <figcaption><b>Blog'da:</b> Birleştirme öncesi ve sonrası iki ekran görüntüsü. Önce <code>&lt;image&gt;</code> yer tutucuları, sonra yerlerine oturan resim vektörleri. "Resim = 256 kelime" bölümünün görseli bu.</figcaption>
+  </figure>
+
+  <figure class="bench" id="w-mask">
+    <header><h3>Dikkat maskesi: causal, Prefix-LM, tam</h3>
+      <p>Satır sorgulayan token, sütun bakılan token. Bir satıra tıkla ya da üzerine gel: o token'ın neleri gördüğü listelenir.</p></header>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Maske türü">
+        <button type="button" data-k="causal" aria-pressed="false">Tam causal</button>
+        <button type="button" data-k="prefix" aria-pressed="true">Prefix-LM</button>
+        <button type="button" data-k="full" aria-pressed="false">Tam çift yönlü</button>
+      </div>
+    </div>
+    <div class="split">
+      <div class="scroll"><table class="mask" id="k-tbl"></table></div>
+      <div class="readout" id="k-read"></div>
+    </div>
+    <figcaption><b>Blog'da:</b> Üç modun ekran görüntüsü yan yana. "Resim soruyu görüyor mu?" satırı Prefix-LM'nin neden seçildiğini tek bakışta anlatır.</figcaption>
+  </figure>
+
+  <figure class="bench" id="w-loc">
+    <header><h3>Kutudan <code>&lt;loc&gt;</code> token'larına</h3>
+      <p>Resmin üzerinde sürükleyerek bir kutu çiz. PaliGemma'nın tespit çıktısında yazacağı token dizisi oluşur.</p></header>
+    <div class="controls">
+      <label for="l-lab">Etiket <input type="text" id="l-lab" value="ev"></label>
+      <button type="button" id="l-copy">Diziyi kopyala</button>
+    </div>
+    <div class="split">
+      <canvas class="pic" id="l-cv" width="448" height="448" aria-label="Kutu çizilecek resim"></canvas>
+      <div class="readout">
+        <div class="big" id="l-out" style="font-size:15px; overflow-wrap:anywhere"></div>
+        <dl class="kv" id="l-read"></dl>
+      </div>
+    </div>
+    <figcaption><b>Blog'da:</b> Kutulu resim ve altında token dizisi. "Göreve özel kafa yok, koordinat bile metin" fikrinin en somut örneği.</figcaption>
+  </figure>
+</section>
+
+<footer>Sayılar: SigLIP-So400m/14, Gemma 2B (gizli boyut 2048), PaliGemma kelime haznesi 257.152. CLIP ve SigLIP matrisindeki vektörler rastgele üretilmiş örnek vektörlerdir, gerçek model çıktısı değildir.</footer>
+</div>
+
+<script>
+/* ---------- ortak ---------- */
+const $=(s)=>document.querySelector(s);
+function rng(seed){ return ()=>{ seed=(Math.imul(seed,1664525)+1013904223)>>>0; return seed/4294967296; }; }
+function gauss(r){ let u=0; while(!u) u=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r()); }
+const norm=v=>{ const n=Math.hypot(...v)||1; return v.map(x=>x/n); };
+const dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
+const sig=x=>1/(1+Math.exp(-x));
+const softplus=x=>x>0? x+Math.log1p(Math.exp(-x)) : Math.log1p(Math.exp(x));
+const tr=(x,d=2)=>Number(x).toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const int=x=>Number(x).toLocaleString('tr-TR');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mix=(v,col)=>`color-mix(in srgb, var(${col}) ${Math.round(Math.max(0,Math.min(1,v))*85)}%, var(--surface))`;
+function bind(id,fn){ const el=$(id); el.addEventListener('input',fn); return el; }
+
+/* ---------- sahne (ViT + loc) ---------- */
+const SRC=document.createElement('canvas'); SRC.width=SRC.height=896;
+function drawScene(c,S){
+  const g=c.createLinearGradient(0,0,0,S); g.addColorStop(0,'#7FB6E6'); g.addColorStop(1,'#DDEFFA'); c.fillStyle=g; c.fillRect(0,0,S,S);
+  c.fillStyle='#F6C24A'; c.beginPath(); c.arc(S*.8,S*.18,S*.08,0,7); c.fill();
+  c.fillStyle='#7DB765'; c.beginPath(); c.moveTo(0,S*.68); c.quadraticCurveTo(S*.3,S*.5,S*.62,S*.66); c.quadraticCurveTo(S*.85,S*.58,S,S*.64); c.lineTo(S,S); c.lineTo(0,S); c.fill();
+  c.fillStyle='#5A9A4B'; c.fillRect(0,S*.8,S,S*.2);
+  c.fillStyle='#EAD7B4'; c.fillRect(S*.2,S*.5,S*.3,S*.26);
+  c.fillStyle='#B4473A'; c.beginPath(); c.moveTo(S*.17,S*.51); c.lineTo(S*.35,S*.36); c.lineTo(S*.53,S*.51); c.fill();
+  c.fillStyle='#6B4A2E'; c.fillRect(S*.31,S*.62,S*.07,S*.14);
+  c.fillStyle='#8EC3E6'; c.fillRect(S*.23,S*.56,S*.06,S*.06); c.fillRect(S*.41,S*.56,S*.06,S*.06);
+  c.fillStyle='#7A5536'; c.fillRect(S*.71,S*.55,S*.04,S*.22);
+  c.fillStyle='#3F7D3A'; c.beginPath(); c.arc(S*.73,S*.5,S*.1,0,7); c.fill();
+}
+drawScene(SRC.getContext('2d'),896);
+const sceneHooks=[];
+
+/* ---------- 1. CLIP / SigLIP matrisi ---------- */
+(function(){
+  const st={mode:'clip',n:6,q:.8,t:20,b:-10,sel:[1,3]}, D=16, r=rng(7);
+  const I=[],Z=[]; for(let i=0;i<10;i++){ I.push(norm(Array.from({length:D},()=>gauss(r)))); Z.push(norm(Array.from({length:D},()=>gauss(r)))); }
+  const grid=$('#m-grid'), read=$('#m-read');
+  function render(){
+    const N=st.n, T=I.map((v,i)=>norm(v.map((x,k)=>st.q*x+(1-st.q)*Z[i][k])));
+    const S=[...Array(N)].map((_,i)=>[...Array(N)].map((_,j)=>dot(I[i],T[j])));
+    const L=S.map(row=>row.map(s=>st.t*s+(st.mode==='sig'?st.b:0)));
+    let P, loss=0;
+    if(st.mode==='clip'){
+      const sm=a=>{ const m=Math.max(...a), e=a.map(x=>Math.exp(x-m)), z=e.reduce((p,q)=>p+q,0); return e.map(x=>x/z); };
+      P=L.map(sm); const C=[...Array(N)].map((_,j)=>sm(L.map(row=>row[j])));
+      for(let i=0;i<N;i++) loss+=(-Math.log(P[i][i])-Math.log(C[i][i]))/2; loss/=N;
+    } else {
+      P=L.map(row=>row.map(sig));
+      for(let i=0;i<N;i++) for(let j=0;j<N;j++) loss+=softplus(-(i===j?1:-1)*L[i][j]); loss/=N;
+    }
+    let [si,sj]=st.sel; if(si>=N) si=N-1; if(sj>=N) sj=N-1; st.sel=[si,sj];
+    grid.style.gridTemplateColumns=`28px repeat(${N},42px)`;
+    let h='<div></div>'; for(let j=0;j<N;j++) h+=`<div class="h">M${j+1}</div>`;
+    for(let i=0;i<N;i++){
+      h+=`<div class="h">R${i+1}</div>`;
+      for(let j=0;j<N;j++){
+        const dep = st.mode==='clip' && (i===si || j===sj) && !(i===si&&j===sj);
+        const cls=['cell', i===j?'diag':'', dep?'dep':'', (i===si&&j===sj)?'sel':''].join(' ');
+        h+=`<button type="button" class="${cls}" data-i="${i}" data-j="${j}" style="background:${mix(P[i][j],'--accent')}" aria-label="Resim ${i+1}, metin ${j+1}: ${tr(P[i][j])}">${tr(P[i][j])}</button>`;
+      }
+    }
+    grid.innerHTML=h;
+    const need = st.mode==='clip' ? 2*N-1 : 1, need32 = st.mode==='clip' ? 2*32768-1 : 1;
+    read.innerHTML=`
+      <div>${st.mode==='clip'
+        ? 'Hücreler <b>satır softmax</b> olasılığı: "Bu resim için doğru metin hangisi?" Her satırın toplamı 1. Kayıp, satır ve sütun cross-entropy\'sinin ortalaması.'
+        : 'Her hücre bağımsız bir <b>sigmoid</b>: "Bu çift eşleşiyor mu?" Satır toplamı 1 olmak zorunda değil. Köşegen etiketi +1, geri kalanı −1.'}</div>
+      <dl class="kv">
+        <dt>Seçili hücre</dt><dd>R${si+1} – M${sj+1} ${si===sj?'(doğru eşleşme)':'(yanlış eşleşme)'}</dd>
+        <dt>Benzerlik x·y</dt><dd>${tr(S[si][sj],3)}</dd>
+        <dt>Logit</dt><dd>${tr(L[si][sj])}${st.mode==='sig'?` = ${st.t}·${tr(S[si][sj],3)} ${st.b<0?'−':'+'} ${tr(Math.abs(st.b),1)}`:''}</dd>
+        <dt>Olasılık</dt><dd>${tr(P[si][sj],4)}</dd>
+        <dt>Gereken skor</dt><dd>${need} ${st.mode==='clip'?'(satır + sütun)':'(yalnızca kendisi)'}</dd>
+        <dt>N = 32.768 olsaydı</dt><dd>${int(need32)} skor</dd>
+        <dt>Kayıp</dt><dd>${tr(loss,3)}</dd>
+      </dl>`;
+  }
+  grid.addEventListener('click',e=>{ const b=e.target.closest('button.cell'); if(!b) return; st.sel=[+b.dataset.i,+b.dataset.j]; render(); });
+  function setMode(m){ st.mode=m; $('#m-clip').setAttribute('aria-pressed',m==='clip'); $('#m-sig').setAttribute('aria-pressed',m==='sig'); $('#m-b-wrap').hidden=m!=='sig'; render(); }
+  $('#m-clip').onclick=()=>setMode('clip'); $('#m-sig').onclick=()=>setMode('sig');
+  bind('#m-n',e=>{ st.n=+e.target.value; $('#m-n-o').value=st.n; render(); });
+  bind('#m-q',e=>{ st.q=e.target.value/100; $('#m-q-o').value=tr(st.q); render(); });
+  bind('#m-t',e=>{ st.t=+e.target.value; $('#m-t-o').value=st.t; render(); });
+  bind('#m-b',e=>{ st.b=+e.target.value; $('#m-b-o').value=st.b; render(); });
+  render();
+})();
+
+/* ---------- 2. Softmax taşması ---------- */
+(function(){
+  const f=Math.fround, inp=$('#s-in');
+  const fmt=v=> Number.isNaN(v)?'NaN' : !Number.isFinite(v)?(v>0?'inf':'−inf') : v===0?'0' : (Math.abs(v)>=1e5||Math.abs(v)<1e-3)? v.toExponential(2) : tr(v,4);
+  function render(){
+    const xs=inp.value.split(/[,;\s]+/).map(Number).filter(Number.isFinite).slice(0,8);
+    if(!xs.length){ $('#s-tbl').innerHTML=''; $('#s-read').textContent='Virgülle ayrılmış sayılar gir.'; return; }
+    const e=xs.map(x=>f(Math.exp(x))); const s=e.reduce((a,b)=>f(a+b),0); const p=e.map(v=>f(v/s));
+    const m=Math.max(...xs); const e2=xs.map(x=>f(Math.exp(x-m))); const s2=e2.reduce((a,b)=>f(a+b),0); const p2=e2.map(v=>f(v/s2));
+    const bad=v=>!Number.isFinite(v)||(v===0);
+    let h='<tr><th>x</th><th>e<sup>x</sup> (float32)</th><th>softmax (doğrudan)</th><th>x − max</th><th>e<sup>x−max</sup></th><th>softmax (kararlı)</th></tr>';
+    xs.forEach((x,i)=>{ h+=`<tr><td>${tr(x,1)}</td><td class="${bad(e[i])?'bad':''}">${fmt(e[i])}</td><td class="${Number.isFinite(p[i])?'':'bad'}">${fmt(p[i])}</td><td>${tr(x-m,1)}</td><td>${fmt(e2[i])}</td><td>${fmt(p2[i])}</td></tr>`; });
+    h+=`<tr><th>toplam</th><td class="${bad(s)?'bad':''}">${fmt(s)}</td><td></td><th></th><td>${fmt(s2)}</td><td></td></tr>`;
+    $('#s-tbl').innerHTML=h;
+    const broke=p.some(v=>!Number.isFinite(v));
+    $('#s-read').innerHTML= broke
+      ? `<span class="badc">Doğrudan hesap bozuldu.</span> ${s===Infinity?'e<sup>x</sup> float32 sınırını (~3.4·10<sup>38</sup>, yani x ≈ 88.7) aştı: inf / inf = NaN.':'Bütün e<sup>x</sup> değerleri 0\'a yuvarlandı: 0 / 0 = NaN.'} Max çıkarılınca en büyük üs e<sup>0</sup> = 1 olur ve sonuç aynı kalır.`
+      : `<span class="okc">İki yol aynı sonucu veriyor.</span> Değerler küçükken max çıkarmak bir şey değiştirmez. Taşma ancak |x| büyüyünce ortaya çıkar.`;
+  }
+  inp.addEventListener('input',render);
+  document.querySelectorAll('#w-softmax [data-v]').forEach(b=>b.onclick=()=>{ inp.value=b.dataset.v; render(); });
+  render();
+})();
+
+/* ---------- 3. Bias −10 ---------- */
+(function(){
+  const svg=$('#b-svg'), X0=56, X1=545, Y0=235, Y1=12, bmin=-15, bmax=5, lmax=5.5;
+  const xs=b=>X0+(b-bmin)/(bmax-bmin)*(X1-X0), ys=l=>Y0-Math.log10(Math.max(l,1))/lmax*(Y0-Y1);
+  const Lf=(b,N)=>softplus(-b)+(N-1)*softplus(b);
+  let k=15, b=0;
+  function render(){
+    const N=2**k, bs=-Math.log(N-1);
+    let d=''; for(let i=0;i<=240;i++){ const bb=bmin+(bmax-bmin)*i/240; d+=(i?'L':'M')+xs(bb).toFixed(1)+','+ys(Lf(bb,N)).toFixed(1); }
+    let g=`<line class="axisl" x1="${X0}" y1="${Y0}" x2="${X1}" y2="${Y0}"/><line class="axisl" x1="${X0}" y1="${Y1}" x2="${X0}" y2="${Y0}"/>`;
+    [1,10,100,1000,1e4,1e5].forEach(v=>{ const y=ys(v); g+=`<line class="axisl" x1="${X0}" x2="${X1}" y1="${y}" y2="${y}" stroke-dasharray="2 4"/><text x="${X0-6}" y="${y+4}" text-anchor="end">${v>=1000?int(v):v}</text>`; });
+    [-15,-10,-5,0,5].forEach(v=>{ g+=`<text x="${xs(v)}" y="${Y0+16}" text-anchor="middle">${v}</text>`; });
+    g+=`<text x="${(X0+X1)/2}" y="${Y0+32}" text-anchor="middle">başlangıç bias'ı b</text>`;
+    g+=`<text x="12" y="${(Y0+Y1)/2}" transform="rotate(-90 12 ${(Y0+Y1)/2})" text-anchor="middle">başlangıç kaybı (log)</text>`;
+    g+=`<line x1="${xs(-10)}" x2="${xs(-10)}" y1="${Y1}" y2="${Y0}" stroke="var(--img)" stroke-dasharray="4 3"/><text x="${xs(-10)+4}" y="${Y1+12}" style="fill:var(--img)">makale: −10</text>`;
+    g+=`<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`;
+    if(bs>=bmin) g+=`<circle cx="${xs(bs)}" cy="${ys(Lf(bs,N))}" r="5" fill="var(--suf)"/>`;
+    g+=`<circle cx="${xs(b)}" cy="${ys(Lf(b,N))}" r="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="3"/>`;
+    svg.innerHTML=g;
+    $('#b-read').innerHTML=`
+      <dl class="kv">
+        <dt>Pozitif hücre</dt><dd>${int(N)}</dd>
+        <dt>Negatif hücre</dt><dd>${int(N*N-N)}</dd>
+        <dt>Kayıp, b = 0</dt><dd>${tr(Lf(0,N))}</dd>
+        <dt>Kayıp, b = −10</dt><dd>${tr(Lf(-10,N))}</dd>
+        <dt>Kayıp, b = ${tr(b,1)}</dt><dd>${tr(Lf(b,N))}</dd>
+        <dt>En iyi b</dt><dd style="color:var(--suf)">−ln(N−1) = ${tr(bs)}</dd>
+      </dl>
+      <div>b = 0 iken her hücre ln 2 kadar kayıp üretir ve N−1 negatif hücre toplamı ezer. Model ilk adımlarda yalnızca "her şeye hayır de" öğrenir. −10 ile başlamak bu ilk sarsıntıyı atlatır.</div>`;
+  }
+  bind('#b-n',e=>{ k=+e.target.value; $('#b-n-o').value=int(2**k); render(); });
+  bind('#b-b',e=>{ b=+e.target.value; $('#b-b-o').value=tr(b,1); render(); });
+  render();
+})();
+
+/* ---------- 4. ViT yamalama ---------- */
+(function(){
+  const cv=$('#v-cv'), cx=cv.getContext('2d'), zm=$('#v-zoom').getContext('2d'), low=document.createElement('canvas');
+  let res=224, p=14, hov=[9,5];
+  function render(){
+    low.width=low.height=res; const lc=low.getContext('2d'); lc.imageSmoothingQuality='high'; lc.drawImage(SRC,0,0,res,res);
+    const g=res/p, cs=448/g;
+    cx.imageSmoothingEnabled=false; cx.drawImage(low,0,0,448,448);
+    const [r,c]=hov;
+    cx.fillStyle='rgba(10,16,24,.38)'; cx.beginPath(); cx.rect(0,0,448,448); cx.rect(c*cs+cs,r*cs,-cs,cs); cx.fill('evenodd');
+    cx.strokeStyle='rgba(255,255,255,.55)'; cx.lineWidth=g>40?0.5:1; cx.beginPath();
+    for(let i=1;i<g;i++){ cx.moveTo(i*cs,0); cx.lineTo(i*cs,448); cx.moveTo(0,i*cs); cx.lineTo(448,i*cs); } cx.stroke();
+    cx.strokeStyle='#FFD23F'; cx.lineWidth=3; cx.strokeRect(c*cs+1.5,r*cs+1.5,cs-3,cs-3);
+    zm.imageSmoothingEnabled=false; zm.clearRect(0,0,112,112); zm.drawImage(low,c*p,r*p,p,p,0,0,112,112);
+    const T=g*g;
+    $('#v-read').innerHTML=`
+      <dt>Yama</dt><dd>#${r*g+c} / ${T} (satır ${r}, sütun ${c})</dd>
+      <dt>Ham boyut</dt><dd>${p}×${p}×3 = ${int(p*p*3)} sayı</dd>
+      <dt>Kod</dt><dd>Conv2d(3, 1152, kernel_size=${p}, stride=${p})</dd>
+      <dt>Çıktı</dt><dd>1152 boyutlu vektör + konum gömmesi #${r*g+c}</dd>
+      <dt>Izgara</dt><dd>${g} × ${g}</dd>
+      <dt>Görüntü token'ı</dt><dd><b>${int(T)}</b></dd>
+      <dt>Dikkat çifti</dt><dd>${int(T*T)} (token sayısının karesi)</dd>`;
+  }
+  function pick(e){ const b=cv.getBoundingClientRect(), g=res/p; const c=Math.floor((e.clientX-b.left)/b.width*g), r=Math.floor((e.clientY-b.top)/b.height*g); if(r>=0&&c>=0&&r<g&&c<g&&(r!==hov[0]||c!==hov[1])){ hov=[r,c]; render(); } }
+  cv.addEventListener('pointermove',pick); cv.addEventListener('pointerdown',pick);
+  function rescale(nr,np){ hov=[Math.min(Math.floor(hov[0]/(res/p)*(nr/np)),nr/np-1), Math.min(Math.floor(hov[1]/(res/p)*(nr/np)),nr/np-1)]; res=nr; p=np; render(); }
+  $('#v-res').addEventListener('change',e=>rescale(+e.target.value,p));
+  $('#v-p').addEventListener('change',e=>rescale(res,+e.target.value));
+  $('#v-file').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; const img=new Image(); img.onload=()=>{ SRC.getContext('2d').drawImage(img,0,0,896,896); URL.revokeObjectURL(img.src); sceneHooks.forEach(fn=>fn()); }; img.src=URL.createObjectURL(f); });
+  sceneHooks.push(render); render();
+})();
+
+/* ---------- 5. BN / LN ---------- */
+(function(){
+  const D=6, scale=[1,8,0.5,20,3,0.2], shift=[0,40,-2,100,5,1], r=rng(11);
+  const base=[...Array(6)].map(()=>scale.map((s,j)=>shift[j]+s*gauss(r)));
+  const outlier=scale.map((s,j)=>(shift[j]+s*2.5)*12);
+  let mode='bn', B=4, out=false;
+  const mean=a=>a.reduce((s,x)=>s+x,0)/a.length, vr=a=>{ const m=mean(a); return mean(a.map(x=>(x-m)**2)); };
+  function apply(X){
+    if(mode==='ln') return { Y:X.map(row=>{ const m=mean(row), s=Math.sqrt(vr(row)+1e-5); return row.map(x=>(x-m)/s); }), stats:X.map(row=>[mean(row),Math.sqrt(vr(row))]) };
+    const cols=[...Array(D)].map((_,j)=>X.map(row=>row[j])); const st=cols.map(c=>[mean(c),Math.sqrt(vr(c))]);
+    return { Y:X.map(row=>row.map((x,j)=>(x-st[j][0])/Math.sqrt(st[j][1]**2+1e-5))), stats:st };
+  }
+  const fv=v=>Math.abs(v)>=100? int(Math.round(v)) : tr(v, Math.abs(v)>=10?1:2);
+  function render(){
+    const X=base.slice(0,B).concat(out?[outlier]:[]); const {Y,stats}=apply(X); const ref=apply(base.slice(0,B)).Y;
+    const amax=Math.max(...X.flat().map(Math.abs));
+    let hi='<tr><th></th>'+[...Array(D)].map((_,j)=>`<th>özellik ${j+1}</th>`).join('')+(mode==='ln'?'<th>μ / σ</th>':'')+'</tr>';
+    let ho='<tr><th></th>'+[...Array(D)].map((_,j)=>`<th>${j+1}</th>`).join('')+'</tr>';
+    X.forEach((row,i)=>{
+      const isO=out&&i===B, name=isO?'aykırı':`örnek ${i+1}`;
+      hi+=`<tr><th${isO?' style="color:var(--suf)"':''}>${name}</th>`+row.map(v=>`<td style="background:${mix(Math.abs(v)/amax, v<0?'--suf':'--accent')}">${fv(v)}</td>`).join('')+(mode==='ln'?`<td class="st">${fv(stats[i][0])} / ${fv(stats[i][1])}</td>`:'')+'</tr>';
+      ho+=`<tr><th${isO?' style="color:var(--suf)"':''}>${name}</th>`+Y[i].map(v=>`<td style="background:${mix(Math.abs(v)/2.5, v<0?'--suf':'--accent')}">${tr(v)}</td>`).join('')+'</tr>';
+    });
+    if(mode==='bn') hi+='<tr><th>μ / σ</th>'+stats.map(s=>`<td class="st">${fv(s[0])} / ${fv(s[1])}</td>`).join('')+'</tr>';
+    $('#n-in').innerHTML=hi; $('#n-o').innerHTML=ho;
+    // eksen çerçevesi: BN'de ilk sütun grubu, LN'de ilk satır grubu
+    const rows=[...$('#n-in').querySelectorAll('tr')].slice(1, 1+X.length);
+    if(mode==='bn') rows.forEach(tr_=>tr_.children[2].classList.add('ax')); else rows[0] && [...rows[0].children].slice(1,1+D).forEach(td=>td.classList.add('ax'));
+    let dmax=0; for(let i=0;i<B;i++) for(let j=0;j<D;j++) dmax=Math.max(dmax,Math.abs(Y[i][j]-ref[i][j]));
+    let msg = mode==='bn'
+      ? 'Çerçeveli sütun: "özellik 2"nin istatistiği bütün örneklerden hesaplanıyor. Her sütunun kendi μ ve σ değeri var.'
+      : 'Çerçeveli satır: "örnek 1"in istatistiği yalnızca kendi 6 özelliğinden hesaplanıyor. Her satırın kendi μ ve σ değeri var.';
+    if(out) msg+= ` <b>Aykırı örnek eklendi.</b> Diğer örneklerin çıktısındaki en büyük değişim: <span class="${dmax>1e-9?'badc':'okc'}">${tr(dmax,3)}</span>. ${dmax>1e-9?'BatchNorm\'da örnekler birbirine bağlı.':'LayerNorm\'da her örnek yalnızca kendine bakıyor.'}`;
+    if(mode==='bn'&&B===1&&!out) msg+=' <div class="warn" style="margin-top:6px">B = 1: her sütunda tek sayı var, varyans 0. Bütün çıktılar 0 oluyor. BatchNorm burada çalışmaz.</div>';
+    $('#n-read').innerHTML='<div>'+msg+'</div>';
+  }
+  function setMode(m){ mode=m; $('#n-bn').setAttribute('aria-pressed',m==='bn'); $('#n-ln').setAttribute('aria-pressed',m==='ln'); render(); }
+  $('#n-bn').onclick=()=>setMode('bn'); $('#n-ln').onclick=()=>setMode('ln');
+  $('#n-out').onclick=e=>{ out=!out; e.currentTarget.setAttribute('aria-pressed',out); e.currentTarget.textContent=out?'Aykırı örneği çıkar':'Aykırı örnek ekle'; render(); };
+  bind('#n-b',e=>{ B=+e.target.value; $('#n-b-o').value=B; render(); });
+  render();
+})();
+
+/* ---------- 6. Kayan dağılım ---------- */
+(function(){
+  const r=rng(5), z0=[...Array(400)].map(()=>gauss(r));
+  const zm=z0.reduce((a,b)=>a+b,0)/400, zs=Math.sqrt(z0.reduce((a,b)=>a+(b-zm)**2,0)/400), z=z0.map(v=>(v-zm)/zs);
+  function hist(svg,vals,lo,hi,bins,ymax,col,ticks){
+    const W=420,H=170,X0=10,X1=410,Y0=145; const c=new Array(bins).fill(0);
+    vals.forEach(v=>{ const k=Math.floor((v-lo)/(hi-lo)*bins); if(k>=0&&k<bins) c[k]++; });
+    const bw=(X1-X0)/bins; let g=`<line class="axisl" x1="${X0}" x2="${X1}" y1="${Y0}" y2="${Y0}"/>`;
+    c.forEach((n,i)=>{ const h=Math.min(n/ymax,1)*(Y0-10); g+=`<rect x="${(X0+i*bw+1).toFixed(1)}" y="${(Y0-h).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${h.toFixed(1)}" fill="var(${col})" rx="1"/>`; });
+    ticks.forEach(t=>{ const x=X0+(t-lo)/(hi-lo)*(X1-X0); g+=`<text x="${x}" y="${Y0+17}" text-anchor="middle">${t}</text>`; });
+    svg.innerHTML=g;
+  }
+  let s=0, timer=null;
+  function render(){
+    const m=s*0.09+2*Math.sin(s/12), sd=1+s*0.03, x=z.map(v=>m+sd*v);
+    hist($('#h-raw'),x,-8,24,40,130,'--img',[-8,0,8,16,24]);
+    hist($('#h-nrm'),z,-4,4,32,50,'--accent',[-4,-2,0,2,4]);
+    $('#h-c1').textContent=`Normalizasyon yok · ortalama ${tr(m)} · std ${tr(sd)}`;
+    $('#h-c2').textContent='LayerNorm sonrası · ortalama 0,00 · std 1,00';
+  }
+  bind('#h-s',e=>{ s=+e.target.value; $('#h-s-o').value=s; render(); });
+  $('#h-play').onclick=e=>{
+    const btn=e.currentTarget;
+    if(timer){ clearInterval(timer); timer=null; btn.setAttribute('aria-pressed','false'); btn.textContent='Oynat'; return; }
+    btn.setAttribute('aria-pressed','true'); btn.textContent='Durdur'; if(s>=100) s=0;
+    timer=setInterval(()=>{ s=Math.min(100,s+1); $('#h-s').value=s; $('#h-s-o').value=s; render(); if(s>=100){ clearInterval(timer); timer=null; btn.setAttribute('aria-pressed','false'); btn.textContent='Oynat'; } },60);
+  };
+  render();
+})();
+
+/* ---------- 7. Piksel ön işleme ---------- */
+(function(){
+  const X0=30,X1=530, lo=-2.5, hi=2.5, xs=v=>X0+(Math.max(lo,Math.min(hi,v))-lo)/(hi-lo)*(X1-X0);
+  function render(){
+    const v=+$('#p-v').value, sig=$('#p-m').value==='sig', mu=sig?.5:.485, sd=sig?.5:.229;
+    const r=v/255, n=(r-mu)/sd, n0=(0-mu)/sd, n1=(1-mu)/sd;
+    $('#p-chain').innerHTML=`
+      <div class="st"><small>Ham piksel</small>${v}</div><span>→</span>
+      <div class="st"><small>Rescale: ÷ 255</small>${tr(r,3)}</div><span>→</span>
+      <div class="st"><small>Normalize: (x − ${mu}) / ${sd}</small><b>${tr(n,3)}</b></div>`;
+    let g=`<rect x="${xs(-1)}" y="18" width="${xs(1)-xs(-1)}" height="20" fill="var(--soft)" stroke="var(--accent)" rx="3"/>`;
+    g+=`<text x="${(xs(-1)+xs(1))/2}" y="13" text-anchor="middle">SigLIP'in eğitimde gördüğü aralık [−1, 1]</text>`;
+    g+=`<line class="axisl" x1="${X0}" x2="${X1}" y1="38" y2="38"/>`;
+    [-2,-1,0,1,2].forEach(t=>g+=`<text x="${xs(t)}" y="56" text-anchor="middle">${t}</text>`);
+    g+=`<line x1="${xs(n0)}" x2="${xs(n1)}" y1="44" y2="44" stroke="var(--img)" stroke-width="3"/>`;
+    g+=`<circle cx="${xs(n)}" cy="28" r="7" fill="var(--suf)"/>`;
+    $('#p-svg').innerHTML=g;
+    const outside=n0<-1.0001||n1>1.0001;
+    $('#p-warn').innerHTML= outside
+      ? `<div class="warn">Bu sabitlerle 0–255 aralığı [${tr(n0)}, ${tr(n1)}] aralığına düşüyor (turuncu çizgi). SigLIP bu sayıları eğitimde hiç görmedi. Model hata vermez, sessizce kötüleşir.</div>`
+      : `<div class="okc">0–255 aralığı tam olarak [−1, 1] aralığına düşüyor (turuncu çizgi). SigLIP'in eğitimde gördüğü dağılımla aynı.</div>`;
+  }
+  bind('#p-v',e=>{ $('#p-v-o').value=e.target.value; render(); });
+  $('#p-m').addEventListener('change',render);
+  render();
+})();
+
+/* ---------- 8. Dizi kurucu ---------- */
+(function(){
+  const words=s=>s.match(/[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu)||[];
+  const sub=n=>String(n).replace(/\d/g,d=>'₀₁₂₃₄₅₆₇₈₉'[d]);
+  let merged=false;
+  function render(){
+    const res=+$('#q-r').value, n=(res/14)**2, pw=words($('#q-p').value), sw=words($('#q-s').value);
+    const show=6; let h='';
+    for(let i=0;i<show;i++) h+=`<span class="tok i${merged?' m':''}">${merged?'v'+sub(i):'&lt;image&gt;'}</span>`;
+    h+=`<span class="tok i more${merged?' m':''}">… +${int(n-show)}</span>`;
+    h+='<span class="tok t">&lt;bos&gt;</span>'+pw.map(w=>`<span class="tok t">${esc(w)}</span>`).join('')+'<span class="tok t">\\n</span>';
+    h+=sw.map(w=>`<span class="tok s">${esc(w)}</span>`).join('')+'<span class="tok s">&lt;eos&gt;</span>';
+    $('#q-seq').innerHTML=h;
+    const P=n+1+pw.length+1, S=sw.length+1;
+    $('#q-read').innerHTML=`
+      <dt>Görüntü token'ı</dt><dd>(${res} / 14)² = ${int(n)}</dd>
+      <dt>Prefix</dt><dd>${int(n)} + 1 (bos) + ${pw.length} (komut) + 1 (\\n) = <b>${int(P)}</b></dd>
+      <dt>Suffix</dt><dd>${sw.length} + 1 (eos) = <b>${S}</b> · kayıp yalnızca burada</dd>
+      <dt>Toplam</dt><dd>${int(P+S)} token</dd>
+      <dt>Prefix içi dikkat</dt><dd>${int(P*P)} çift (çift yönlü blok)</dd>
+      <dt>Durum</dt><dd>${merged?'Yer tutucuların yerine SigLIP + Linear çıktısı yazıldı (masked_scatter).':'input_ids: &lt;image&gt; token\'ları henüz yer tutucu.'}</dd>`;
+  }
+  ['#q-p','#q-s'].forEach(id=>$(id).addEventListener('input',render));
+  $('#q-r').addEventListener('change',render);
+  $('#q-m').onclick=e=>{ merged=!merged; e.currentTarget.setAttribute('aria-pressed',merged); e.currentTarget.textContent=merged?'Yer tutuculara geri dön':'Yer tutucuları vektörlerle değiştir'; render(); };
+  render();
+})();
+
+/* ---------- 9. Maske ---------- */
+(function(){
+  const toks=[['img₁','i'],['img₂','i'],['img₃','i'],['detect','t'],['ev','t'],['\\n','t'],['<loc…>','s'],['ev','s'],['<eos>','s']];
+  const P=6; let kind='prefix', act=4;
+  const see=(r,c)=> kind==='full' ? true : kind==='causal' ? c<=r : (c<P||c<=r);
+  function render(){
+    let h='<tr><th></th>'+toks.map(([n,c],k)=>`<th class="${c}${see(act,k)?' vis':''}">${esc(n)}</th>`).join('')+'</tr>';
+    toks.forEach(([n,c],r)=>{
+      h+=`<tr data-r="${r}" class="${r===act?'act':''}"><th class="${c}" style="text-align:right">${esc(n)}</th>`;
+      toks.forEach((_,k)=>{ const y=see(r,k); h+=`<td class="${y?'y':''}" data-r="${r}">${y?'✓':''}</td>`; });
+      h+='</tr>';
+    });
+    h+='<tr><th style="text-align:right;color:var(--muted)">kayıp</th>'+toks.map((_,k)=>`<td class="loss">${k>=P?'●':''}</td>`).join('')+'</tr>';
+    $('#k-tbl').innerHTML=h;
+    const vis=toks.filter((_,k)=>see(act,k)).map(t=>esc(t[0]));
+    const imgSees=see(0,3);
+    const desc={causal:'Her token yalnızca kendinden öncekileri görür. GPT ve Gemma tek başına böyle çalışır.',
+      prefix:'Prefix (resim + komut + \\n) kendi içinde tamamen çift yönlü. Cevap token\'ları prefix\'in tamamını ve kendinden önceki cevap token\'larını görür.',
+      full:'Herkes herkesi görür. Üretim için kullanılamaz, çünkü cevap token\'ı geleceği, yani tahmin edeceği kelimeyi görür.'}[kind];
+    $('#k-read').innerHTML=`<div>${desc}</div>
+      <dl class="kv">
+        <dt>Seçili satır</dt><dd>${esc(toks[act][0])}</dd>
+        <dt>Görebildikleri</dt><dd>${vis.join(', ')} (${vis.length})</dd>
+        <dt>Resim soruyu görüyor mu?</dt><dd class="${imgSees?'okc':'badc'}">${imgSees?'Evet':'Hayır'}</dd>
+        <dt>Cevap geleceği görüyor mu?</dt><dd class="${see(6,7)?'badc':'okc'}">${see(6,7)?'Evet (sızıntı)':'Hayır'}</dd>
+      </dl>`;
+  }
+  const tbl=$('#k-tbl'); const pickRow=e=>{ const el=e.target.closest('[data-r]'); if(el&&+el.dataset.r!==act){ act=+el.dataset.r; render(); } };
+  tbl.addEventListener('pointerover',pickRow); tbl.addEventListener('click',pickRow);
+  document.querySelectorAll('#w-mask [data-k]').forEach(b=>b.onclick=()=>{ kind=b.dataset.k; document.querySelectorAll('#w-mask [data-k]').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
+  render();
+})();
+
+/* ---------- 10. <loc> kodlayıcı ---------- */
+(function(){
+  const cv=$('#l-cv'), cx=cv.getContext('2d');
+  let box=[0.17,0.36,0.53,0.76], drag=null; // x1,y1,x2,y2 (0–1)
+  const bin=v=>Math.min(1023,Math.max(0,Math.floor(v*1024)));
+  const tok=v=>`<loc${String(bin(v)).padStart(4,'0')}>`;
+  function seqStr(){ const [x1,y1,x2,y2]=box; return tok(Math.min(y1,y2))+tok(Math.min(x1,x2))+tok(Math.max(y1,y2))+tok(Math.max(x1,x2))+' '+($('#l-lab').value.trim()||'nesne'); }
+  function render(){
+    cx.drawImage(SRC,0,0,448,448);
+    const [x1,y1,x2,y2]=box, X=Math.min(x1,x2)*448, Y=Math.min(y1,y2)*448, W=Math.abs(x2-x1)*448, H=Math.abs(y2-y1)*448;
+    cx.fillStyle='rgba(10,16,24,.35)'; cx.beginPath(); cx.rect(0,0,448,448); cx.rect(X+W,Y,-W,H); cx.fill('evenodd');
+    cx.strokeStyle='#FFD23F'; cx.lineWidth=3; cx.strokeRect(X,Y,W,H);
+    $('#l-out').textContent=seqStr();
+    const ymn=Math.min(y1,y2), xmn=Math.min(x1,x2), ymx=Math.max(y1,y2), xmx=Math.max(x1,x2);
+    const row=(n,v)=>`<dt>${n}</dt><dd>${tr(v,3)} × 1024 → ${bin(v)} · 224 px resimde ${Math.round(v*224)} px</dd>`;
+    $('#l-read').innerHTML=row('y_min',ymn)+row('x_min',xmn)+row('y_max',ymx)+row('x_max',xmx)+'<dt>Sıra</dt><dd>y_min, x_min, y_max, x_max, etiket</dd>';
+  }
+  const pos=e=>{ const b=cv.getBoundingClientRect(); return [Math.min(1,Math.max(0,(e.clientX-b.left)/b.width)), Math.min(1,Math.max(0,(e.clientY-b.top)/b.height))]; };
+  cv.addEventListener('pointerdown',e=>{ cv.setPointerCapture(e.pointerId); const [x,y]=pos(e); drag=[x,y]; box=[x,y,x,y]; render(); });
+  cv.addEventListener('pointermove',e=>{ if(!drag) return; const [x,y]=pos(e); box=[drag[0],drag[1],x,y]; render(); });
+  const end=()=>{ if(!drag) return; drag=null; if(Math.abs(box[2]-box[0])<0.01||Math.abs(box[3]-box[1])<0.01) box=[0.17,0.36,0.53,0.76]; render(); };
+  cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  $('#l-lab').addEventListener('input',render);
+  $('#l-copy').onclick=e=>{ const btn=e.currentTarget, s=seqStr();
+    const done=t=>{ btn.textContent=t; setTimeout(()=>btn.textContent='Diziyi kopyala',1400); };
+    const fallback=()=>{ const r=document.createRange(); r.selectNodeContents($('#l-out')); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); done('Seçildi, Ctrl+C'); };
+    try{ navigator.clipboard.writeText(s).then(()=>done('Kopyalandı'),fallback); }catch(_){ fallback(); } };
+  sceneHooks.push(render); render();
+})();
+</script>
